@@ -1,8 +1,8 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from "@nestjs/common";
 import { User } from "./entities/user.entity";
 import { SignupInput } from "src/auth/dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { EntityNotFoundError, Repository } from "typeorm";
 import { hash } from "bcrypt";
 
 @Injectable()
@@ -35,14 +35,27 @@ export class UsersService {
     throw new Error("findOne not implemented");
   }
 
+  async findOneByEmail(email: string): Promise<User> {
+    try {
+      return await this.userRepository.findOneByOrFail({ email: email });
+    } catch (error) {
+      this.handleDbExceptions(error);
+    }
+  }
+
   block(id: string): Promise<User> {
     throw new Error("block not implemented");
   }
 
   private handleDbExceptions(error: any) {
     if (error.code === "23505") {
-      throw new BadRequestException(error.detail);
+      throw new BadRequestException("[user-exists]");
     }
+
+    if (error instanceof EntityNotFoundError) {
+      throw new NotFoundException("[user-not-found]");
+    }
+
     this.logger.error(error);
     throw new InternalServerErrorException("Unexpected error, check server logs");
   }
