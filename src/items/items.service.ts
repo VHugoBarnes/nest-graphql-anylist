@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from "@nestjs/common";
 import { CreateItemInput, UpdateItemInput } from "./dto/";
 import { Item } from "./entities/item.entity";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -22,16 +22,24 @@ export class ItemsService {
     }
   }
 
-  findAll() {
-    return "This action returns all items";
+  async findAll(): Promise<Item[]> {
+    return this.itemRepository.find({});
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} item`;
+  async findOne(id: string): Promise<Item> {
+    const item = await this.itemRepository.findOneBy({ id: id });
+
+    if (!item) throw new NotFoundException("[item-not-found]");
+
+    return item;
   }
 
-  update(id: number, updateItemInput: UpdateItemInput) {
-    return `This action updates a #${id} item`;
+  async update(id: string, updateItemInput: UpdateItemInput): Promise<Item> {
+    const item = await this.itemRepository.preload(updateItemInput);
+
+    if (!item) throw new NotFoundException("[item-not-found]");
+
+    return this.itemRepository.save(item);
   }
 
   remove(id: number) {
