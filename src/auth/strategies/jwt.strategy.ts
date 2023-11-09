@@ -18,6 +18,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: any): Promise<User> {
     console.log({ payload });
 
-    throw new UnauthorizedException("[invalid-token-🥲x]");
+    throw new UnauthorizedException("[invalid-token-🥲]");
   }
 }
