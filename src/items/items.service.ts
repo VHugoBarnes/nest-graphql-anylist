@@ -1,11 +1,25 @@
-import { Injectable } from "@nestjs/common";
-import { CreateItemInput } from "./dto/create-item.input";
-import { UpdateItemInput } from "./dto/update-item.input";
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
+import { CreateItemInput, UpdateItemInput } from "./dto/";
+import { Item } from "./entities/item.entity";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class ItemsService {
-  create(createItemInput: CreateItemInput) {
-    return "This action adds a new item";
+  private readonly logger = new Logger("ItemsService");
+
+  constructor(
+    @InjectRepository(Item)
+    private readonly itemRepository: Repository<Item>
+  ) { }
+  async create(createItemInput: CreateItemInput): Promise<Item> {
+    try {
+      const newItem = this.itemRepository.create(createItemInput);
+
+      return await this.itemRepository.save(newItem);
+    } catch (error) {
+      this.handleDbExceptions(error);
+    }
   }
 
   findAll() {
@@ -22,5 +36,13 @@ export class ItemsService {
 
   remove(id: number) {
     return `This action removes a #${id} item`;
+  }
+
+  private handleDbExceptions(error: any) {
+    if (error.code === "23505") {
+      throw new BadRequestException(error.detail);
+    }
+    this.logger.error(error);
+    throw new InternalServerErrorException("Unexpected error, check server logs");
   }
 }
