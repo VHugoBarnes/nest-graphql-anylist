@@ -1,0 +1,1 @@
+export { SignupInput } from "./inputs/signup.input";
