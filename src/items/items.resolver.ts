@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int, ID } from "@nestjs/graphql";
+import { Resolver, Query, Mutation, Args, ID } from "@nestjs/graphql";
 import { ItemsService } from "./items.service";
 import { Item } from "./entities/item.entity";
 import { CreateItemInput, UpdateItemInput } from "./dto";
@@ -33,7 +33,7 @@ export class ItemsResolver {
   }
 
   @Mutation(() => Item)
-  removeItem(@Args("id", { type: () => Int }) id: number) {
+  async removeItem(@Args("id", { type: () => ID }, ParseUUIDPipe) id: string): Promise<Item> {
     return this.itemsService.remove(id);
   }
 }
