@@ -62,8 +62,12 @@ export class UsersService {
     }
   }
 
-  block(id: string): Promise<User> {
-    throw new Error("block not implemented");
+  async block(id: string, blockedByUser: User): Promise<User> {
+    const userToBlock = await this.findOneById(id);
+    userToBlock.isActive = false;
+    userToBlock.lastUpdateBy = blockedByUser;
+
+    return this.userRepository.save(userToBlock);
   }
 
   private handleDbExceptions(error: any) {
