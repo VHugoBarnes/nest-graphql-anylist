@@ -5,6 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { EntityNotFoundError, Repository } from "typeorm";
 import { hash } from "bcrypt";
 import { ValidRoles } from "src/auth/enums/valid-roles.enum";
+import { UpdateUserInput } from "./dto";
 
 @Injectable()
 export class UsersService {
@@ -57,6 +58,23 @@ export class UsersService {
   async findOneById(id: string): Promise<User> {
     try {
       return await this.userRepository.findOneByOrFail({ id: id });
+    } catch (error) {
+      this.handleDbExceptions(error);
+    }
+  }
+
+  async update(userId: string, updateUserInput: UpdateUserInput, updateBy: User): Promise<User> {
+    try {
+      const user = await this.userRepository.preload(updateUserInput);
+
+      // update password?
+      if (updateUserInput.password) {
+        user.password = await hash(user.password, 10);
+      }
+
+      user.lastUpdateBy = updateBy;
+
+      return await this.userRepository.save(user);
     } catch (error) {
       this.handleDbExceptions(error);
     }
