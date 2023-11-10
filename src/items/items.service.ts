@@ -53,6 +53,16 @@ export class ItemsService {
     return { ...item, id };
   }
 
+  async itemCountByUser(user: User): Promise<number> {
+    return this.itemRepository.count({
+      where: {
+        user: {
+          id: user.id
+        }
+      }
+    });
+  }
+
   private handleDbExceptions(error: any) {
     if (error.code === "23505") {
       throw new BadRequestException(error.detail);
