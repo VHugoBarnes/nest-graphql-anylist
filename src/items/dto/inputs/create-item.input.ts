@@ -17,7 +17,7 @@ export class CreateItemInput {
 
   @Field(() => String, { nullable: true })
   @IsString()
-  @Min(1)
+  @MinLength(1)
   @IsOptional()
   quantityUnit?: string;
 }
