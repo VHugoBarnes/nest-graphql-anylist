@@ -23,12 +23,12 @@ export class ItemsService {
     }
   }
 
-  async findAll(): Promise<Item[]> {
-    return this.itemRepository.find({});
+  async findAll(ofUser: User): Promise<Item[]> {
+    return this.itemRepository.find({ where: { user: { id: ofUser.id } } });
   }
 
-  async findOne(id: string): Promise<Item> {
-    const item = await this.itemRepository.findOneBy({ id: id });
+  async findOne(id: string, user: User): Promise<Item> {
+    const item = await this.itemRepository.findOne({ where: { id: id, user: { id: user.id } }, relations: ["user"] });
 
     if (!item) throw new NotFoundException("[item-not-found]");
 
@@ -43,8 +43,8 @@ export class ItemsService {
     return this.itemRepository.save(item);
   }
 
-  async remove(id: string): Promise<Item> {
-    const item = await this.findOne(id);
+  async remove(id: string, user: User): Promise<Item> {
+    const item = await this.findOne(id, user);
 
     await this.itemRepository.remove(item);
 
