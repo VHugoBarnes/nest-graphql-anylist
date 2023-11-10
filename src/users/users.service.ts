@@ -4,6 +4,7 @@ import { SignupInput } from "src/auth/dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { EntityNotFoundError, Repository } from "typeorm";
 import { hash } from "bcrypt";
+import { ValidRoles } from "src/auth/enums/valid-roles.enum";
 
 @Injectable()
 export class UsersService {
@@ -27,8 +28,14 @@ export class UsersService {
     }
   }
 
-  async findAll(): Promise<User[]> {
-    return [];
+  async findAll(roles: ValidRoles[]): Promise<User[]> {
+    if (roles.length === 0) return await this.userRepository.find({});
+
+    // We have roles
+    return this.userRepository.createQueryBuilder()
+      .andWhere("ARRAY[roles] && ARRAY[:...roles]")
+      .setParameter("roles", roles)
+      .getMany();
   }
 
   async findOne(id: string): Promise<User> {
