@@ -7,4 +7,5 @@ export const EnvConfiguration = () => ({
   port: process.env.PORT,
   hostApi: process.env.HOST_API,
   JwtSecret: process.env.JWT_SECRET,
+  state: process.env.STATE,
 });
