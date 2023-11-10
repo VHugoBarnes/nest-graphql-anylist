@@ -32,12 +32,24 @@ export class UsersService {
   }
 
   async findOne(id: string): Promise<User> {
-    throw new Error("findOne not implemented");
+    try {
+      return await this.userRepository.findOneByOrFail({ id: id });
+    } catch (error) {
+      this.handleDbExceptions(error);
+    }
   }
 
   async findOneByEmail(email: string): Promise<User> {
     try {
       return await this.userRepository.findOneByOrFail({ email: email });
+    } catch (error) {
+      this.handleDbExceptions(error);
+    }
+  }
+
+  async findOneById(id: string): Promise<User> {
+    try {
+      return await this.userRepository.findOneByOrFail({ id: id });
     } catch (error) {
       this.handleDbExceptions(error);
     }
