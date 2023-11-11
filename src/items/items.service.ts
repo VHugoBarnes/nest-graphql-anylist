@@ -2,8 +2,9 @@ import { BadRequestException, Injectable, InternalServerErrorException, Logger, 
 import { CreateItemInput, UpdateItemInput } from "./dto/";
 import { Item } from "./entities/item.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Like, Repository } from "typeorm";
 import { User } from "src/users/entities/user.entity";
+import { PaginationArgs, SearchArgs } from "src/common/dto/args";
 
 @Injectable()
 export class ItemsService {
@@ -23,8 +24,18 @@ export class ItemsService {
     }
   }
 
-  async findAll(ofUser: User): Promise<Item[]> {
-    return this.itemRepository.find({ where: { user: { id: ofUser.id } } });
+  async findAll(ofUser: User, paginationArgs: PaginationArgs, searchArgs: SearchArgs): Promise<Item[]> {
+    const { limit, offset } = paginationArgs;
+    const { search } = searchArgs;
+
+    return this.itemRepository.find({
+      take: limit,
+      skip: offset,
+      where: {
+        user: { id: ofUser.id },
+        name: Like(`%${search}%`)
+      }
+    });
   }
 
   async findOne(id: string, user: User): Promise<Item> {
