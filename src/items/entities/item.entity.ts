@@ -21,6 +21,10 @@ export class Item {
   @Field(() => String, { nullable: true })
   quantityUnit: string;
 
+  @Column({ name: "category" })
+  @Field(() => String)
+  category: string;
+
   @ManyToOne(() => User, (user) => user.items, { nullable: false, lazy: true })
   @Index("userId-index")
   @Field(() => User)

@@ -15,6 +15,11 @@ export class CreateItemInput {
   // @IsPositive()
   // quantity: number;
 
+  @Field(() => String)
+  @IsString()
+  @MinLength(2)
+  category: string;
+
   @Field(() => String, { nullable: true })
   @IsString()
   @MinLength(1)
