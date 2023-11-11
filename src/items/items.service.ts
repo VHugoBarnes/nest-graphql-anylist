@@ -28,14 +28,17 @@ export class ItemsService {
     const { limit, offset } = paginationArgs;
     const { search } = searchArgs;
 
-    return this.itemRepository.find({
-      take: limit,
-      skip: offset,
-      where: {
-        user: { id: ofUser.id },
-        name: Like(`%${search}%`)
-      }
-    });
+    const queryBuilder = this.itemRepository.createQueryBuilder()
+      .take(limit)
+      .skip(offset)
+      // eslint-disable-next-line quotes
+      .where(`"userId" = :userId`, { userId: ofUser.id });
+
+    if (search) {
+      queryBuilder.andWhere("LOWER(name) like :name", { name: `%${search.toLowerCase()}%` });
+    }
+
+    return await queryBuilder.getMany();
   }
 
   async findOne(id: string, user: User): Promise<Item> {
