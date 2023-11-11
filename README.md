@@ -27,7 +27,4 @@ docker-compose up -d
 pnpm run start:dev
 ```
 
-7. Ejecutar seed
-```http
-GET localhost:9999/api/seed
-```
+7. Ejecutar seed en GraphQL `http://localhost:9999/graphql`
