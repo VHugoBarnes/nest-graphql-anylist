@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, Logger, 
 import { CreateItemInput, UpdateItemInput } from "./dto/";
 import { Item } from "./entities/item.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Like, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { User } from "src/users/entities/user.entity";
 import { PaginationArgs, SearchArgs } from "src/common/dto/args";
 
@@ -14,6 +14,7 @@ export class ItemsService {
     @InjectRepository(Item)
     private readonly itemRepository: Repository<Item>
   ) { }
+
   async create(createItemInput: CreateItemInput, user: User): Promise<Item> {
     try {
       const newItem = this.itemRepository.create({ ...createItemInput, user: user });
@@ -31,8 +32,7 @@ export class ItemsService {
     const queryBuilder = this.itemRepository.createQueryBuilder()
       .take(limit)
       .skip(offset)
-      // eslint-disable-next-line quotes
-      .where(`"userId" = :userId`, { userId: ofUser.id });
+      .where("\"userId\" = :userId", { userId: ofUser.id });
 
     if (search) {
       queryBuilder.andWhere("LOWER(name) like :name", { name: `%${search.toLowerCase()}%` });
