@@ -2,7 +2,7 @@ import { Resolver, Query, Mutation, Args, ID } from "@nestjs/graphql";
 import { ListsService } from "./lists.service";
 import { List } from "./entities/list.entity";
 import { CreateListInput, UpdateListInput } from "./dto";
-import { UseGuards } from "@nestjs/common";
+import { ParseUUIDPipe, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { CurrentUser } from "src/auth/decorators/current-user.decorator";
 import { User } from "src/users/entities/user.entity";
@@ -32,7 +32,7 @@ export class ListsResolver {
 
   @Query(() => List, { name: "list" })
   findOne(
-    @Args("id", { type: () => ID }) id: string,
+    @Args("id", { type: () => ID }, ParseUUIDPipe) id: string,
     @CurrentUser() user: User
   ): Promise<List> {
     return this.listsService.findOne(id, user);
@@ -48,7 +48,7 @@ export class ListsResolver {
 
   @Mutation(() => List, { name: "removeList" })
   removeList(
-    @Args("id", { type: () => ID }) id: string,
+    @Args("id", { type: () => ID }, ParseUUIDPipe) id: string,
     @CurrentUser() user: User
   ): Promise<List> {
     return this.listsService.remove(id, user);
