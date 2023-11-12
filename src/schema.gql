@@ -18,7 +18,7 @@ type User {
   itemCount: Int!
   listCount: Int!
   items(offset: Int = 0, limit: Int = 10, search: String): [Item!]!
-  lists(offset: Int = 0, limit: Int = 10, search: String): [Item!]!
+  lists(offset: Int = 0, limit: Int = 10, search: String): [List!]!
 }
 
 type Item {

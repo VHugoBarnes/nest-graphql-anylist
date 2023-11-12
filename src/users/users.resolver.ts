@@ -79,7 +79,7 @@ export class UsersResolver {
     return this.itemsService.findAll(user, paginationArgs, searchArgs);
   }
 
-  @ResolveField(() => [Item], { name: "lists" })
+  @ResolveField(() => [List], { name: "lists" })
   async getListsByUser(
     @CurrentUser([ValidRoles.admin]) admin: User,
     @Parent() user: User,
