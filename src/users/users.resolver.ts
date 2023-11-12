@@ -28,10 +28,9 @@ export class UsersResolver {
 
   @Query(() => User, { name: "user" })
   findOne(
+    @CurrentUser([ValidRoles.admin, ValidRoles.superUser]) user: User,
     @Args("id", { type: () => ID }, ParseUUIDPipe) id: string,
-    @CurrentUser([ValidRoles.admin, ValidRoles.superUser]) user: User
   ): Promise<User> {
-    console.log({ user });
     return this.usersService.findOneById(id);
   }
 
