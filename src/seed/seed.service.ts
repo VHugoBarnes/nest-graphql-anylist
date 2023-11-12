@@ -1,14 +1,19 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Item } from "src/items/entities/item.entity";
-import { User } from "src/users/entities/user.entity";
 import { Repository } from "typeorm";
-import { SEED_USERS, SEED_ITEMS } from "./data/seed-data";
-import { UsersService } from "src/users/users.service";
-import { ItemsService } from "src/items/items.service";
+
+import { SEED_USERS, SEED_ITEMS, SEED_LISTS } from "./data/seed-data";
+
 import { List } from "src/lists/entities/list.entity";
 import { ListItem } from "src/list-item/entities/list-item.entity";
+import { Item } from "src/items/entities/item.entity";
+import { User } from "src/users/entities/user.entity";
+
+import { ListsService } from "src/lists/lists.service";
+import { UsersService } from "src/users/users.service";
+import { ItemsService } from "src/items/items.service";
+import { ListItemService } from "src/list-item/list-item.service";
 
 @Injectable()
 export class SeedService {
@@ -27,6 +32,8 @@ export class SeedService {
 
     private readonly usersService: UsersService,
     private readonly itemsService: ItemsService,
+    private readonly listsService: ListsService,
+    private readonly listItemService: ListItemService
   ) {
     this.isProd = configService.get("state") === "prod";
   }
@@ -44,8 +51,12 @@ export class SeedService {
     await this.loadItems(user);
 
     // Load lists
+    const list: List = await this.loadLists(user);
 
     // Load list items
+    const items: Item[] = await this.itemsService.findAll(user, { limit: 15, offset: 0 }, {});
+    await this.loadListItems(list, items);
+
     return true;
   }
 
@@ -93,5 +104,26 @@ export class SeedService {
     }
 
     await Promise.all(itemPromises);
+  }
+
+  async loadLists(user: User): Promise<List> {
+    const lists = [];
+
+    for (const list of SEED_LISTS) {
+      lists.push(await this.listsService.create(list, user));
+    }
+
+    return lists[0];
+  }
+
+  async loadListItems(list: List, items: Item[]): Promise<void> {
+    for (const item of items) {
+      this.listItemService.create({
+        quantity: Math.round(Math.random() * 21),
+        completed: Math.round(Math.random() * 1) === 0 ? false : true,
+        listId: list.id,
+        itemId: item.id
+      });
+    }
   }
 }
