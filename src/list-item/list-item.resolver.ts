@@ -4,6 +4,7 @@ import { ListItem } from "./entities/list-item.entity";
 import { CreateListItemInput } from "./dto/create-list-item.input";
 import { ParseUUIDPipe, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
+import { UpdateListItemInput } from "./dto/update-list-item.input";
 
 @Resolver(() => ListItem)
 @UseGuards(JwtAuthGuard)
@@ -34,10 +35,12 @@ export class ListItemResolver {
     return this.listItemService.findOne(id);
   }
 
-  // @Mutation(() => ListItem)
-  // updateListItem(@Args("updateListItemInput") updateListItemInput: UpdateListItemInput) {
-  //   return this.listItemService.update(updateListItemInput.id, updateListItemInput);
-  // }
+  @Mutation(() => ListItem)
+  async updateListItem(
+    @Args("updateListItemInput") updateListItemInput: UpdateListItemInput,
+  ): Promise<ListItem> {
+    return this.listItemService.update(updateListItemInput.id, updateListItemInput);
+  }
 
   // @Mutation(() => ListItem)
   // removeListItem(@Args("id", { type: () => Int }) id: number) {
