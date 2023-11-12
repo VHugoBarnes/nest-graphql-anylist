@@ -16,7 +16,7 @@ type User {
   isActive: Boolean!
   lastUpdateBy: User
   itemCount: Int!
-  listCound: Int!
+  listCount: Int!
   items(offset: Int = 0, limit: Int = 10, search: String): [Item!]!
   lists(offset: Int = 0, limit: Int = 10, search: String): [Item!]!
 }
