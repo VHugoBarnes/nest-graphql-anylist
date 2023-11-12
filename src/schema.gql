@@ -2,12 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type List {
-  id: ID!
-  name: String!
-  user: User!
-}
-
 type User {
   id: ID!
   fullName: String!
@@ -21,12 +15,28 @@ type User {
   lists(offset: Int = 0, limit: Int = 10, search: String): [List!]!
 }
 
+type List {
+  id: ID!
+  name: String!
+  user: User!
+  items: [ListItem!]!
+}
+
+type ListItem {
+  id: ID!
+  quantity: Int!
+  completed: Boolean!
+  list: List!
+  item: Item!
+}
+
 type Item {
   id: ID!
   name: String!
   quantityUnit: String
   category: String!
   user: User!
+  listItem: [ListItem!]!
 }
 
 type AuthResponse {
@@ -42,6 +52,7 @@ type Query {
   item(id: ID!): Item!
   lists(offset: Int = 0, limit: Int = 10, search: String): [List!]!
   list(id: ID!): List!
+  listItem: [ListItem!]!
 }
 
 enum ValidRoles {
@@ -61,6 +72,7 @@ type Mutation {
   createList(createListInput: CreateListInput!): List!
   updateList(updateListInput: UpdateListInput!): List!
   removeList(id: ID!): List!
+  createListItem(createListItemInput: CreateListItemInput!): ListItem!
   executeSeed: Boolean!
 }
 
@@ -104,4 +116,11 @@ input CreateListInput {
 input UpdateListInput {
   name: String
   id: ID!
+}
+
+input CreateListItemInput {
+  quantity: Float = 0
+  completed: Boolean = false
+  listId: ID!
+  itemId: ID!
 }
