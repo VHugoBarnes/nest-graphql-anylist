@@ -68,6 +68,16 @@ export class ListsService {
     return { ...list, id };
   }
 
+  async listCountByUser(user: User): Promise<number> {
+    return this.listRepository.count({
+      where: {
+        user: {
+          id: user.id
+        }
+      }
+    });
+  }
+
   private handleDbExceptions(error: any) {
     if (error.code === "23505") {
       throw new BadRequestException(error.detail);
