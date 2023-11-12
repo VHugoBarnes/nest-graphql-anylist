@@ -4,6 +4,8 @@ import { ListItem } from "./entities/list-item.entity";
 import { CreateListItemInput } from "./dto/create-list-item.input";
 import { UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
+import { List } from "src/lists/entities/list.entity";
+import { PaginationArgs, SearchArgs } from "src/common/dto/args";
 
 @Resolver(() => ListItem)
 @UseGuards(JwtAuthGuard)
@@ -19,8 +21,12 @@ export class ListItemResolver {
   }
 
   @Query(() => [ListItem], { name: "listItem" })
-  findAll() {
-    return this.listItemService.findAll();
+  findAll(
+    // @Args() list: List,
+    // @Args() paginationArgs: PaginationArgs,
+    // @Args() searchArgs: SearchArgs
+  ) {
+    // return this.listItemService.findAll(list, paginationArgs, searchArgs);
   }
 
   // @Query(() => ListItem, { name: "listItem" })

@@ -30,7 +30,7 @@ export class ListItemService {
     const { limit, offset } = paginationArgs;
     const { search } = searchArgs;
 
-    const queryBuilder = this.listItemRepository.createQueryBuilder()
+    const queryBuilder = this.listItemRepository.createQueryBuilder("listItem")
       .innerJoin("listItem.item", "item")
       .take(limit)
       .skip(offset)

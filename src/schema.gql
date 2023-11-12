@@ -19,7 +19,8 @@ type List {
   id: ID!
   name: String!
   user: User!
-  items: [ListItem!]!
+  items(offset: Int = 0, limit: Int = 10, search: String): [ListItem!]!
+  totalItems: Float!
 }
 
 type ListItem {

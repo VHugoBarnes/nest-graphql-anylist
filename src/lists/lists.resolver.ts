@@ -67,4 +67,11 @@ export class ListsResolver {
   ): Promise<ListItem[]> {
     return this.listItemService.findAll(list, paginationArgs, searchArgs);
   }
+
+  @ResolveField(() => Number, { name: "totalItems" })
+  countListItemsByList(
+    @Parent() list: List
+  ): Promise<number> {
+    return this.listsService.countItemsByList(list);
+  }
 }

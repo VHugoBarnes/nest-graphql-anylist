@@ -6,6 +6,7 @@ import { List } from "./entities/list.entity";
 import { Repository } from "typeorm";
 import { User } from "src/users/entities/user.entity";
 import { PaginationArgs, SearchArgs } from "src/common/dto/args";
+import { ListItem } from "src/list-item/entities/list-item.entity";
 
 @Injectable()
 export class ListsService {
@@ -13,7 +14,9 @@ export class ListsService {
 
   constructor(
     @InjectRepository(List)
-    private readonly listRepository: Repository<List>
+    private readonly listRepository: Repository<List>,
+    @InjectRepository(ListItem)
+    private readonly listItemRepository: Repository<ListItem>
   ) { }
 
   async create(createListInput: CreateListInput, user: User): Promise<List> {
@@ -69,11 +72,19 @@ export class ListsService {
   }
 
   async listCountByUser(user: User): Promise<number> {
-    return this.listRepository.count({
+    return await this.listRepository.count({
       where: {
         user: {
           id: user.id
         }
+      }
+    });
+  }
+
+  async countItemsByList(list: List): Promise<number> {
+    return await this.listItemRepository.count({
+      where: {
+        list: { id: list.id }
       }
     });
   }
